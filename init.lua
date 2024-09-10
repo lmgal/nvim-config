@@ -50,3 +50,5 @@ vim.api.nvim_create_autocmd("LspAttach", {
     }, bufnr)
   end,
 })
+
+vim.wo.relativenumber = true
