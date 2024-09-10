@@ -36,8 +36,12 @@ return {
   -- 	},
   -- },
   {
-    "github/copilot.vim",
-    lazy = false
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "BufRead",
+    config = function()
+      require("copilot").setup()
+    end,
   },
   {
     "windwp/nvim-ts-autotag",
