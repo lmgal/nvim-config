@@ -7,23 +7,6 @@ return {
   {
     "williamboman/mason.nvim",
     opts = {
-      ensure_installed = {
-        "lua-language-server",
-        "html-lsp",
-        "prettier",
-        "stylua",
-        "basedpyright",
-        "htmx-lsp",
-        "tailwindcss-language-server",
-        "basedpyright",
-        "clangd",
-        "djlint",
-        "eslint-lsp",
-        "omnisharp",
-        "typescript-language-server",
-        "css-lsp",
-        "jinja-lsp"
-      }
     }
   },
   -- {
@@ -40,7 +23,15 @@ return {
     cmd = "Copilot",
     event = "BufRead",
     config = function()
-      require("copilot").setup()
+      require("copilot").setup({
+        suggestion = {
+          auto_trigger = true,
+          keymap = {
+            accept_word = "<M-w>",
+            accept_line = "<M-$>"
+          }
+        }
+      })
     end,
   },
   {
@@ -50,7 +41,7 @@ return {
   {
     "williamboman/mason-lspconfig.nvim",
     lazy = false,
- },
+  },
   {
     "neovim/nvim-lspconfig",
     config = function()
@@ -72,5 +63,5 @@ return {
             -- Configuration here, or leave empty to use defaults
         })
     end
-}
+  }
 }
