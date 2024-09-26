@@ -27,10 +27,11 @@ return {
     end,
     config = function(_, opts)
       local telescope = require "telescope"
-      opts.defaults.mappings = {
-        i = {
-          ['<CR>'] = select_one_or_multi
-        }
+      opts.defaults.mappings.i = {
+        ['<CR>'] = select_one_or_multi
+      }
+      opts.defaults.mappings.n = {
+        ['<CR>'] = select_one_or_multi
       }
       telescope.setup(opts)
 
