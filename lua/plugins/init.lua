@@ -1,11 +1,19 @@
 local select_one_or_multi = function(prompt_bufnr)
   local picker = require('telescope.actions.state').get_current_picker(prompt_bufnr)
   local multi = picker:get_multi_selection()
+  local escape_str = function(str)
+    return str:gsub([[\]], [[\\]]):gsub("[-+*?^$().[]%s]", [[%1]])
+  end
+
   if not vim.tbl_isempty(multi) then
     require('telescope.actions').close(prompt_bufnr)
     for _, j in pairs(multi) do
       if j.path ~= nil then
-        vim.cmd(string.format('%s %s', 'edit', j.path))
+        if j.lnum ~= nil then
+          vim.cmd(string.format("%s +%s %s", "edit", j.lnum, escape_str(j.path)))
+        else
+          vim.cmd(string.format("%s %s", "edit", escape_str(j.path)))
+        end
       end
     end
   else
