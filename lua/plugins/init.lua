@@ -2,7 +2,7 @@ local select_one_or_multi = function(prompt_bufnr)
   local picker = require('telescope.actions.state').get_current_picker(prompt_bufnr)
   local multi = picker:get_multi_selection()
   local escape_str = function(str)
-    return str:gsub([[\]], [[\\]]):gsub("[-+*?^$().[]%s]", [[%1]])
+    return str:gsub("[-+*?^$().[]%s]", [[%1]])
   end
 
   if not vim.tbl_isempty(multi) then
@@ -25,29 +25,6 @@ return {
   {
     "nvim-tree/nvim-tree.lua",
     enabled = false,
-  },
-  {
-    "nvim-telescope/telescope.nvim",
-    dependencies = { "nvim-treesitter/nvim-treesitter" },
-    cmd = "Telescope",
-    opts = function()
-      return require "nvchad.configs.telescope"
-    end,
-    config = function(_, opts)
-      local telescope = require "telescope"
-      opts.defaults.mappings.i = {
-        ['<CR>'] = select_one_or_multi
-      }
-      opts.defaults.mappings.n = {
-        ['<CR>'] = select_one_or_multi
-      }
-      telescope.setup(opts)
-
-      -- load extensions
-      for _, ext in ipairs(opts.extensions_list) do
-        telescope.load_extension(ext)
-      end
-    end,
   },
   {
     "mikavilpas/yazi.nvim",
@@ -146,6 +123,39 @@ return {
       require("nvim-surround").setup {
         -- Configuration here, or leave empty to use defaults
       }
+    end,
+  },
+  {
+      'akinsho/flutter-tools.nvim',
+      lazy = false,
+      dependencies = {
+          'nvim-lua/plenary.nvim',
+          'stevearc/dressing.nvim', -- optional for vim.ui.select
+      },
+      config = function () require('flutter-tools').setup{} end,
+  },
+  {
+    "nvim-telescope/telescope.nvim",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    cmd = "Telescope",
+    opts = function()
+      return require "nvchad.configs.telescope"
+    end,
+    config = function(_, opts)
+      local telescope = require "telescope"
+      opts.defaults.mappings.i = {
+        ['<CR>'] = select_one_or_multi
+      }
+      opts.defaults.mappings.n = {
+        ['<CR>'] = select_one_or_multi
+      }
+      telescope.setup(opts)
+
+      -- load extensions
+      for _, ext in ipairs(opts.extensions_list) do
+        telescope.load_extension(ext)
+      end
+      telescope.load_extension("flutter")
     end,
   },
 }
