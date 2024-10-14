@@ -23,8 +23,28 @@ end
 
 return {
   {
-    "nvim-tree/nvim-tree.lua",
-    enabled = false,
+    'smjonas/inc-rename.nvim',
+    config = function()
+      require('inc-rename').setup()
+    end,
+  },
+  {
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    opts = {
+      modes = {
+        char = {
+          jump_labels = true
+        }
+      }
+    },
+    keys = {
+      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+      { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+      { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+      { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+    },
   },
   {
     "mikavilpas/yazi.nvim",
@@ -86,8 +106,6 @@ return {
           auto_trigger = true,
           keymap = {
             accept_suggestion = "<M-l>",
-            accept_word = "<M-j>",
-            accept_line = "<M-k>",
           },
         },
       }
@@ -158,4 +176,36 @@ return {
       telescope.load_extension("flutter")
     end,
   },
+  {
+      "debugloop/telescope-undo.nvim",
+      dependencies = { -- note how they're inverted to above example
+        {
+          "nvim-telescope/telescope.nvim",
+          dependencies = { "nvim-lua/plenary.nvim" },
+        },
+      },
+      keys = {
+        { -- lazy style key map
+          "<leader>u",
+          "<cmd>Telescope undo<cr>",
+          desc = "undo history",
+        },
+      },
+      opts = {
+        -- don't use `defaults = { }` here, do this in the main telescope spec
+        extensions = {
+          undo = {
+            -- telescope-undo.nvim config, see below
+          },
+          -- no other extensions here, they can have their own spec too
+        },
+      },
+      config = function(_, opts)
+        -- Calling telescope's setup from multiple specs does not hurt, it will happily merge the
+        -- configs for us. We won't use data, as everything is in it's own namespace (telescope
+        -- defaults, as well as each extension).
+        require("telescope").setup(opts)
+        require("telescope").load_extension("undo")
+      end,
+    }
 }
