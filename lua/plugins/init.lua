@@ -23,13 +23,45 @@ end
 
 return {
   {
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+    },
+    event = { "BufReadPost", "BufNewFile" },
+    config = function()
+      require('nvim-treesitter.configs').setup {
+        textobjects = {
+          select = {
+            enable = true,
+            lookahead = true,
+            keymaps = {
+              ["af"] = { query = "@function.outer", desc = "Select outer part of a function" },
+              ["if"] = { query = "@function.inner", desc = "Select inner part of a function" },
+              ["ac"] = { query = "@class.outer", desc = "Select outer part of a class" },
+              ["ic"] = { query = "@class.inner", desc = "Select inner part of a class" }
+            },
+          },
+          swap = {
+            enable = true,
+            swap_next = {
+              ["<leader>l"] = "@parameter.inner",
+            },
+            swap_previous = {
+              ["<leader>h"] = "@parameter.inner",
+            },
+          },
+        },
+      }
+    end
+  },
+  {
     'stevearc/aerial.nvim',
-    lazy = false,
+    event = { "BufReadPost", "BufNewFile" },
     opts = {},
     -- Optional dependencies
     dependencies = {
-       "nvim-treesitter/nvim-treesitter",
-       "nvim-tree/nvim-web-devicons"
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons"
     },
     config = function()
       require("aerial").setup({
@@ -96,11 +128,11 @@ return {
       }
     },
     keys = {
-      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-      { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-      { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-      { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+      { "s",     mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
+      { "S",     mode = { "n", "x", "o" }, function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
+      { "r",     mode = "o",               function() require("flash").remote() end,            desc = "Remote Flash" },
+      { "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+      { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
     },
   },
   {
@@ -201,13 +233,13 @@ return {
     end,
   },
   {
-      'akinsho/flutter-tools.nvim',
-      lazy = false,
-      dependencies = {
-          'nvim-lua/plenary.nvim',
-          'stevearc/dressing.nvim', -- optional for vim.ui.select
-      },
-      config = function () require('flutter-tools').setup{} end,
+    'akinsho/flutter-tools.nvim',
+    lazy = false,
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'stevearc/dressing.nvim',     -- optional for vim.ui.select
+    },
+    config = function() require('flutter-tools').setup {} end,
   },
   {
     "nvim-telescope/telescope.nvim",
@@ -234,35 +266,35 @@ return {
     end,
   },
   {
-      "debugloop/telescope-undo.nvim",
-      dependencies = { -- note how they're inverted to above example
-        {
-          "nvim-telescope/telescope.nvim",
-          dependencies = { "nvim-lua/plenary.nvim" },
-        },
+    "debugloop/telescope-undo.nvim",
+    dependencies = {   -- note how they're inverted to above example
+      {
+        "nvim-telescope/telescope.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
       },
-      keys = {
-        { -- lazy style key map
-          "<leader>u",
-          "<cmd>Telescope undo<cr>",
-          desc = "undo history",
-        },
+    },
+    keys = {
+      {   -- lazy style key map
+        "<leader>u",
+        "<cmd>Telescope undo<cr>",
+        desc = "undo history",
       },
-      opts = {
-        -- don't use `defaults = { }` here, do this in the main telescope spec
-        extensions = {
-          undo = {
-            -- telescope-undo.nvim config, see below
-          },
-          -- no other extensions here, they can have their own spec too
+    },
+    opts = {
+      -- don't use `defaults = { }` here, do this in the main telescope spec
+      extensions = {
+        undo = {
+          -- telescope-undo.nvim config, see below
         },
+        -- no other extensions here, they can have their own spec too
       },
-      config = function(_, opts)
-        -- Calling telescope's setup from multiple specs does not hurt, it will happily merge the
-        -- configs for us. We won't use data, as everything is in it's own namespace (telescope
-        -- defaults, as well as each extension).
-        require("telescope").setup(opts)
-        require("telescope").load_extension("undo")
-      end,
-    }
+    },
+    config = function(_, opts)
+      -- Calling telescope's setup from multiple specs does not hurt, it will happily merge the
+      -- configs for us. We won't use data, as everything is in it's own namespace (telescope
+      -- defaults, as well as each extension).
+      require("telescope").setup(opts)
+      require("telescope").load_extension("undo")
+    end,
+  }
 }
