@@ -16,3 +16,7 @@ map("n", "<leader>u","<cmd>Telescope undo<CR>", { desc = "telescope undo tree" }
 map("n", "<leader>a", "<cmd>AerialToggle left<CR>", { desc = "toggle aerial" })
 
 map("n", "<leader>ra", ":IncRename ")
+
+-- Swap lines
+map("n", "<A-k>", ":m .-2<CR>==", { desc = "move line up" })
+map("n", "<A-j>", ":m .+1<CR>==", { desc = "move line down" })
