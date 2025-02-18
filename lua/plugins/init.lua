@@ -49,7 +49,11 @@ return {
               ["af"] = { query = "@function.outer", desc = "Select outer part of a function" },
               ["if"] = { query = "@function.inner", desc = "Select inner part of a function" },
               ["ac"] = { query = "@class.outer", desc = "Select outer part of a class" },
-              ["ic"] = { query = "@class.inner", desc = "Select inner part of a class" }
+              ["ic"] = { query = "@class.inner", desc = "Select inner part of a class" },
+              ["ab"] = { query = "@block.outer", desc = "Select outer part of a block" },
+              ["ib"] = { query = "@block.inner", desc = "Select inner part of a block" },
+              ["aP"] = { query = "@parameter.outer", desc = "Select outer part of a parameter" },
+              ["iP"] = { query = "@parameter.inner", desc = "Select inner part of a parameter" },
             },
           },
           swap = {
@@ -66,26 +70,6 @@ return {
     end
   },
   {
-    'stevearc/aerial.nvim',
-    event = { "BufReadPost", "BufNewFile" },
-    opts = {},
-    -- Optional dependencies
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "nvim-tree/nvim-web-devicons"
-    },
-    config = function()
-      require("aerial").setup({
-        -- optionally use on_attach to set keymaps when aerial has attached to a buffer
-        on_attach = function(bufnr)
-          -- Jump forwards/backwards with '{' and '}'
-          vim.keymap.set("n", "{", "<cmd>AerialPrev<CR>", { buffer = bufnr })
-          vim.keymap.set("n", "}", "<cmd>AerialNext<CR>", { buffer = bufnr })
-        end,
-      })
-    end,
-  },
-  {
     "folke/trouble.nvim",
     opts = {}, -- for default options, refer to the configuration section for custom setup.
     cmd = "Trouble",
@@ -95,31 +79,6 @@ return {
         "<cmd>Trouble diagnostics toggle<cr>",
         desc = "Diagnostics (Trouble)",
       },
-    --   {
-    --     "<leader>xX",
-    --     "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
-    --     desc = "Buffer Diagnostics (Trouble)",
-    --   },
-    --   {
-    --     "<leader>cs",
-    --     "<cmd>Trouble symbols toggle focus=false<cr>",
-    --     desc = "Symbols (Trouble)",
-    --   },
-    --   {
-    --     "<leader>cl",
-    --     "<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
-    --     desc = "LSP Definitions / references / ... (Trouble)",
-    --   },
-    --   {
-    --     "<leader>xL",
-    --     "<cmd>Trouble loclist toggle<cr>",
-    --     desc = "Location List (Trouble)",
-    --   },
-    --   {
-    --     "<leader>xQ",
-    --     "<cmd>Trouble qflist toggle<cr>",
-    --     desc = "Quickfix List (Trouble)",
-    --   },
     },
   },
   {
@@ -187,15 +146,6 @@ return {
     "williamboman/mason.nvim",
     opts = {},
   },
-  -- {
-  -- 	"nvim-treesitter/nvim-treesitter",
-  -- 	opts = {
-  -- 		ensure_installed = {
-  -- 			"vim", "lua", "vimdoc",
-  --      "html", "css"
-  -- 		},
-  -- 	},
-  -- },
   {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
@@ -248,7 +198,7 @@ return {
     lazy = false,
     dependencies = {
       'nvim-lua/plenary.nvim',
-      'stevearc/dressing.nvim',     -- optional for vim.ui.select
+      'stevearc/dressing.nvim', -- optional for vim.ui.select
     },
     config = function() require('flutter-tools').setup {} end,
   },
@@ -278,14 +228,14 @@ return {
   },
   {
     "debugloop/telescope-undo.nvim",
-    dependencies = {   -- note how they're inverted to above example
+    dependencies = { -- note how they're inverted to above example
       {
         "nvim-telescope/telescope.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
       },
     },
     keys = {
-      {   -- lazy style key map
+      { -- lazy style key map
         "<leader>u",
         "<cmd>Telescope undo<cr>",
         desc = "undo history",
@@ -307,5 +257,63 @@ return {
       require("telescope").setup(opts)
       require("telescope").load_extension("undo")
     end,
+  },
+  {
+    "yetone/avante.nvim",
+    event = "VeryLazy",
+    lazy = false,
+    version = false, -- Set this to "*" to always pull the latest release version, or set it to false to update to the latest code changes.
+    opts = {
+      -- add any opts here
+      -- for example
+      provider = "openai",
+      openai = {
+        endpoint = "https://api.openai.com/v1",
+        model = "gpt-4o-mini",       -- your desired model (or use gpt-4o, etc.)
+        timeout = 30000,        -- timeout in milliseconds
+        temperature = 0,        -- adjust if needed
+        max_tokens = 4096,
+      },
+    },
+    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+    build = "make",
+    -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+    dependencies = {
+      "stevearc/dressing.nvim",
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      --- The below dependencies are optional,
+      "echasnovski/mini.pick",       -- for file_selector provider mini.pick
+      "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
+      "hrsh7th/nvim-cmp",            -- autocompletion for avante commands and mentions
+      "ibhagwan/fzf-lua",            -- for file_selector provider fzf
+      "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+      "zbirenbaum/copilot.lua",      -- for providers='copilot'
+      {
+        -- support for image pasting
+        "HakonHarnes/img-clip.nvim",
+        event = "VeryLazy",
+        opts = {
+          -- recommended settings
+          default = {
+            embed_image_as_base64 = false,
+            prompt_for_file_name = false,
+            drag_and_drop = {
+              insert_mode = true,
+            },
+            -- required for Windows users
+            use_absolute_path = true,
+          },
+        },
+      },
+      {
+        -- Make sure to set this up properly if you have lazy=true
+        'MeanderingProgrammer/render-markdown.nvim',
+        opts = {
+          file_types = { "markdown", "Avante" },
+        },
+        ft = { "markdown", "Avante" },
+      },
+    },
   }
 }
